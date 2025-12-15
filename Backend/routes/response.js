@@ -170,7 +170,8 @@ For all generated text values in the JSON object: DO NOT USE ANY MARKDOWN FORMAT
 `;
 
     try {
-        const response = await getGeminiResponse(combinedRoastPrompt, 0, true);
+        // Use the flash model (gemini-2.5-flash)
+        const response = await getGeminiResponse(combinedRoastPrompt);
         const jsonMatch = response.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
             throw new Error("No valid JSON object found in the AI response.");
