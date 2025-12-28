@@ -38,9 +38,9 @@ export default function Footer() {
   }, []);
 
   return (
-    <div className="absolute bottom-4 left-4 mb-3 sm:mb-3 right-4">
+    <div className="relative w-full px-4 pb-8 mt-auto">
       <div className="hidden sm:flex justify-between items-center">
-        <div className="bg-[#202020]  text-white text-sm font-mono px-4 py-2 rounded-lg shadow-lg">
+        <div className="bg-[#202020] text-white text-sm font-mono px-4 py-2 rounded-lg">
           <div className="flex items-center space-x-2">
             <span className="text-base">{emojis[emojiIndex]}</span>
             <span className="text-xs tracking-wider font-medium">
@@ -49,7 +49,7 @@ export default function Footer() {
                 href="https://siddz.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className=" transition-colors hover:text-blue-300 duration-200 cursor-pointer underline underline-offset-3"
+                className="transition-colors hover:text-blue-300 duration-200 cursor-pointer underline underline-offset-3"
               >
                 SIDDHARTH
               </a>
@@ -67,8 +67,8 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="sm:hidden flex border-t border-[#ffffff] flex-col items-center space-y-2 text-center">
-        <div className="flex items-center space-x-2">
+      <div className="sm:hidden flex flex-col items-center space-y-3 text-center pt-4">
+        <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg">
           <span className="text-base">{emojis[emojiIndex]}</span>
           <span className="text-xs text-black/80 font-mono tracking-wider font-semibold">
             2025 | A PROJECT BY{' '}
@@ -82,7 +82,7 @@ export default function Footer() {
             </a>
           </span>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg">
           ⏲️
           <span className="text-xs text-black/80 ml-2 font-mono tracking-wider font-semibold">
             {currentTime}

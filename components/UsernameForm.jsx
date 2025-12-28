@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ConfettiButton } from "@/components/magicui/confetti";
+import { ConfettiButton } from "@/components/confetti-button";
 import { toast } from 'sonner';
 import config from '../config.json';
 
 export default function UsernameForm({ onSubmitComplete }) {
-  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -91,40 +89,36 @@ export default function UsernameForm({ onSubmitComplete }) {
   };
 
   return (
-    <div className="relative">
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-2xl mx-auto px-2 sm:px-0 sm:h-[56px]">
-          <div className="flex-1 bg-white/70 backdrop-blur-xl border-2 border-[#8f8f8f] rounded-xl relative hover:border-[#5e5e5e] focus-within:border-[#242424] focus-within:bg-white/90 transition-all duration-300 ease-in-out h-full group">
-            <span className="absolute left-4 sm:left-6 top-1/2 transform -translate-y-1/2 text-base sm:text-lg font-merri text-black/70 pointer-events-none group-focus-within:text-black/70 transition-colors duration-200">
+    <div className="relative w-full max-w-xl mx-auto">
+      <form onSubmit={handleSubmit} className="relative z-10">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:px-1.5 sm:py-1.5 sm:bg-white sm:rounded-2xl sm:border-2 sm:border-gray-200 sm:shadow-lg sm:shadow-gray-100/50 transition-all duration-300 sm:hover:shadow-xl sm:hover:shadow-gray-100/80 sm:focus-within:shadow-xl sm:focus-within:border-gray-300 sm:focus-within:ring-4 sm:focus-within:ring-gray-100/50">
+          <div className="flex-1 relative flex py-3 sm:py-0 items-center h-12 sm:h-auto bg-white sm:bg-transparent rounded-xl sm:rounded-xl border-2 sm:border-0 border-gray-200 sm:border-transparent px-1 sm:px-0">
+            <span className="absolute left-4 text-gray-400 font-space font-medium select-none text-lg">
               u/
             </span>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder={t('usernameForm.placeholder')}
+              placeholder="Enter Reddit username"
               disabled={isLoading}
-              className="w-full bg-transparent outline-none text-lg sm:text-xl font-merri text-black placeholder-black/50 py-3 sm:py-[13px] pl-[2.33rem] sm:pl-12 pr-4 sm:pr-6 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-full bg-transparent outline-none text-lg font-outfit font-medium text-gray-900 placeholder-gray-400 pl-10 pr-4 rounded-xl"
             />
           </div>
           <ConfettiButton
             type="submit"
             disabled={!username.trim() || isLoading}
-            className="bg-[#272727] text-white backdrop-blur-3xl cursor-pointer font-pop font-medium text-lg sm:text-lg py-3 sm:py-[11px] px-6 sm:px-7 h-full rounded-lg transition-all duration-200 hover:bg-black/90 disabled:bg-black/70 disabled:opacity-100 disabled:cursor-not-allowed shadow-sm hover:shadow-md whitespace-nowrap flex items-center justify-center gap-2"
-            options={{
-              particleCount: 100,
-              spread: 70,
-              origin: { y: 0.6 }
-            }}
+            className="h-12 sm:h-auto cursor-pointer px-8 py-3 sm:py-[0.685rem] rounded-xl bg-[#202224] text-white font-space font-medium text-base transition-all duration-200 hover:bg-black disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[140px] shadow-md sm:shadow-none"
+            variant="default"
           >
             {isLoading ? (
               <>
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                <span>{t('usernameForm.loading')}</span>
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white"></div>
+                <span>Preparing...</span>
               </>
             ) : (
               <>
-                {t('usernameForm.button')} 🎉
+                Get Roasted
               </>
             )}
           </ConfettiButton>

@@ -14,9 +14,14 @@ const limiter = rateLimiter({
 })
 
 async function getGeminiResponse(prompt, retryCount = 0, useProModel = false) {
-  const API_KEYS = [
-    process.env.GEMINI_API_KEY_1, process.env.GEMINI_API_KEY_2, process.env.GEMINI_API_KEY_3, process.env.GEMINI_API_KEY_4, process.env.GEMINI_API_KEY_5, process.env.GEMINI_API_KEY_6, process.env.GEMINI_API_KEY_7, process.env.GEMINI_API_KEY_8, process.env.GEMINI_API_KEY_9, process.env.GEMINI_API_KEY_10, process.env.GEMINI_API_KEY_11, process.env.GEMINI_API_KEY_12, process.env.GEMINI_API_KEY_13, process.env.GEMINI_API_KEY_14, process.env.GEMINI_API_KEY_15, process.env.GEMINI_API_KEY_16, process.env.GEMINI_API_KEY_17, process.env.GEMINI_API_KEY_18, process.env.GEMINI_API_KEY_19, process.env.GEMINI_API_KEY_20, process.env.GEMINI_API_KEY_21, process.env.GEMINI_API_KEY_22, process.env.GEMINI_API_KEY_23, process.env.GEMINI_API_KEY_24, process.env.GEMINI_API_KEY_25, process.env.GEMINI_API_KEY_26, process.env.GEMINI_API_KEY_27, process.env.GEMINI_API_KEY_28, process.env.GEMINI_API_KEY_29, process.env.GEMINI_API_KEY_30, process.env.GEMINI_API_KEY_31, process.env.GEMINI_API_KEY_32, process.env.GEMINI_API_KEY_33, process.env.GEMINI_API_KEY_34, process.env.GEMINI_API_KEY_35, process.env.GEMINI_API_KEY_36, process.env.GEMINI_API_KEY_37, process.env.GEMINI_API_KEY_38, process.env.GEMINI_API_KEY_39, process.env.GEMINI_API_KEY_40, process.env.GEMINI_API_KEY_41, process.env.GEMINI_API_KEY_42, process.env.GEMINI_API_KEY_43, process.env.GEMINI_API_KEY_44, process.env.GEMINI_API_KEY_45, process.env.GEMINI_API_KEY_46, process.env.GEMINI_API_KEY_47, process.env.GEMINI_API_KEY_48, process.env.GEMINI_API_KEY_49, process.env.GEMINI_API_KEY_50, process.env.GEMINI_API_KEY_51, process.env.GEMINI_API_KEY_52, process.env.GEMINI_API_KEY_53, process.env.GEMINI_API_KEY_54, process.env.GEMINI_API_KEY_55, process.env.GEMINI_API_KEY_56, process.env.GEMINI_API_KEY_57, process.env.GEMINI_API_KEY_58, process.env.GEMINI_API_KEY_59, process.env.GEMINI_API_KEY_60, process.env.GEMINI_API_KEY_61, process.env.GEMINI_API_KEY_62, process.env.GEMINI_API_KEY_63, process.env.GEMINI_API_KEY_64, process.env.GEMINI_API_KEY_65, process.env.GEMINI_API_KEY_66, process.env.GEMINI_API_KEY_67, process.env.GEMINI_API_KEY_68, process.env.GEMINI_API_KEY_69, process.env.GEMINI_API_KEY_70, process.env.GEMINI_API_KEY_71, process.env.GEMINI_API_KEY_72, process.env.GEMINI_API_KEY_73, process.env.GEMINI_API_KEY_74, process.env.GEMINI_API_KEY_75, process.env.GEMINI_API_KEY_76, process.env.GEMINI_API_KEY_77, process.env.GEMINI_API_KEY_78, process.env.GEMINI_API_KEY_79, process.env.GEMINI_API_KEY_80, process.env.GEMINI_API_KEY_81, process.env.GEMINI_API_KEY_82, process.env.GEMINI_API_KEY_83, process.env.GEMINI_API_KEY_84, process.env.GEMINI_API_KEY_85, process.env.GEMINI_API_KEY_86, process.env.GEMINI_API_KEY_87, process.env.GEMINI_API_KEY_88, process.env.GEMINI_API_KEY_89, process.env.GEMINI_API_KEY_90, process.env.GEMINI_API_KEY_91, process.env.GEMINI_API_KEY_92, process.env.GEMINI_API_KEY_93, process.env.GEMINI_API_KEY_94, process.env.GEMINI_API_KEY_95, process.env.GEMINI_API_KEY_96, process.env.GEMINI_API_KEY_97, process.env.GEMINI_API_KEY_98, process.env.GEMINI_API_KEY_99, process.env.GEMINI_API_KEY_100, process.env.GEMINI_API_KEY_101, process.env.GEMINI_API_KEY_102, process.env.GEMINI_API_KEY_103, process.env.GEMINI_API_KEY_104, process.env.GEMINI_API_KEY_105, process.env.GEMINI_API_KEY_106, process.env.GEMINI_API_KEY_107, process.env.GEMINI_API_KEY_108, process.env.GEMINI_API_KEY_109, process.env.GEMINI_API_KEY_110, process.env.GEMINI_API_KEY_111, process.env.GEMINI_API_KEY_112, process.env.GEMINI_API_KEY_113, process.env.GEMINI_API_KEY_114, process.env.GEMINI_API_KEY_115, process.env.GEMINI_API_KEY_116, process.env.GEMINI_API_KEY_117, process.env.GEMINI_API_KEY_118, process.env.GEMINI_API_KEY_119, process.env.GEMINI_API_KEY_120, process.env.GEMINI_API_KEY_121, process.env.GEMINI_API_KEY_122, process.env.GEMINI_API_KEY_123, process.env.GEMINI_API_KEY_124, process.env.GEMINI_API_KEY_125, process.env.GEMINI_API_KEY_126, process.env.GEMINI_API_KEY_127, process.env.GEMINI_API_KEY_128, process.env.GEMINI_API_KEY_129, process.env.GEMINI_API_KEY_130, process.env.GEMINI_API_KEY_131, process.env.GEMINI_API_KEY_132, process.env.GEMINI_API_KEY_133, process.env.GEMINI_API_KEY_134, process.env.GEMINI_API_KEY_135, process.env.GEMINI_API_KEY_136, process.env.GEMINI_API_KEY_137, process.env.GEMINI_API_KEY_138, process.env.GEMINI_API_KEY_139
-  ].filter(Boolean)
+  const API_KEYS = process.env.API_KEYS 
+    ? process.env.API_KEYS.split(',').map(key => key.trim()).filter(Boolean)
+    : []
+  
+  if (API_KEYS.length === 0) {
+    throw new Error('No API keys configured. Please set API_KEYS environment variable.')
+  }
+  
   const shuffledKeys = [...API_KEYS].sort(() => Math.random() - 0.5)
   
   const payload = {
@@ -92,9 +97,11 @@ function extractSubreddits(comments) {
 
 async function generateRoastQuestions(comments, username) {
   const recentComments = comments.slice(0, 150); // Keep limited for questions
-  const roastPrompt = `Based on the Reddit posts and comments below, generate exactly two playful or sarcastic yes/no questions about the user's behavior or interests. Each question should come with a separate response for both "yes" and "no" answers.
+  const roastPrompt = `Based on the Reddit posts and comments below, generate exactly two playful or sarcastic yes/no questions about this person's behavior, habits, or interests.
 
-Make the questions witty, judgmental, or sarcastic like a roasting friend would ask in genz style but don't overdo it. Focus on their behavior, posting style, subreddit choices, recurring phrases, or obvious patterns in their activity. It should be short like a normal message, Keep it entertaining.
+Each question must feel like something a roasting friend would casually ask, witty, slightly judgmental, a bit sarcastic, but still fun. Use really basic english to make them understand, Gen Z energy, but don't overdo it. Think teasing, not trying too hard.
+
+The questions should clearly relate to patterns in how they post or behave. This could include their posting style, subreddit choices, recurring phrases, obsessions, contradictions, or anything they clearly do way too often without realizing it.
 
 Return the result as a JSON array of two objects with exactly these keys:
 - question: the question text
@@ -150,28 +157,79 @@ ${JSON.stringify(comments)}
 
 Now, generate the content for each key in the JSON object by following these individual prompts EXACTLY as described.
 
-**1. For the "detailedRoast" key:**
-*   **PROMPT:** Based on the Reddit posts and comments below, write a detailed roast of the user. Be witty, sarcastic, chaotic, even unhinged if needed. You're allowed to use less grammar or slang if it makes it feel more Gen Z or human. Avoid being formal or robotic. Focus on how they post, what they post, their energy, patterns, obsessions, hypocrisy, and weird subreddit choices. Make it sharp, clever, ruthless if needed but still fun. No filters. Just pure roast. Generate a detailed roast (strictly around 400 words).
+1. "detailedRoast"
+PROMPT:
+Based on the Reddit posts and comments above, write a long-form roast of this person.
+Be witty, sarcastic, slightly unhinged, and observant. This should feel like a friend who has spent way too much time scrolling their profile and now can't unsee the patterns.
 
-**2. For the "strengthAnalysis" key:**
-*   **PROMPT:** Based on the Reddit posts and comments below, call out their strengths and good traits—but make it spicy, unfiltered, and borderline feral. Think of it like a roast from someone who lowkey admires the chaos. If they're smart, helpful, funny, weirdly insightful, or just deranged in a productive way, point it out. Don’t be afraid to lean into the madness—if they’re quietly unhinged but effective, say it. If they post like someone who hasn’t slept in 3 days but still makes sense, highlight that. Be sarcastic, be real. Use casual tone, no need for proper grammar, make it feel like a person speaking, not a corporate summary. If they're quietly unhinged but effective, say that too. Be sarcastic and fun. Generate a strength analysis (strictly around 150 words).
+Roast their posting habits, tone, subreddit choices, obsessions, contradictions, energy, coping mechanisms, and the way they clearly use Reddit as therapy but pretend they don't.
+You're allowed to exaggerate, speculate, and creatively connect dots, as long as it feels emotionally accurate.
 
-**3. For the "weaknessAnalysis" key:**
-*   **PROMPT:** Based on the Reddit posts and comments below, call out the user's weak spots. Not in a boring way. Make it spicy, honest, and dark if needed. If they overshare, if they post like a fed, if they argue too much, if they simp hard or doomscroll daily, say it. Make it feel like a friend calling them out while still kinda loving the chaos. Use slang, less grammar, TikTok brain energy if needed. Give actual insight too, not just insults. Be sarcastic and fun. Generate a weakness analysis (strictly around 150 words).
+Use Gen Z / internet slang where it fits. Grammar can be loose.
+No formal language. No safe corporate tone.
+Sharp, clever, chaotic, but not cruel.
+Strictly around 400 words.
 
-**4. For the "loveLifeAnalysis" key:**
-*   **PROMPT:** Based on the Reddit posts and comments below, make fun, dark, chaotic, or suspicious guesses about this user's love life. Be entertaining. Maybe they overshare, maybe they've never touched grass, maybe they flirt like an NPC. Whatever it is, call it out. Use casual tone, Gen Z energy, less grammar is fine. Make it feel like a weirdly accurate, lowkey disturbing but funny read. But still try to give some insight into how they might be in relationships or what they actually want. Generate a love life analysis (strictly around 150 words).
+2. "strengthAnalysis"
+PROMPT:
+Now roast them lovingly.
+Call out their strengths in a way that sounds sarcastic but is actually respect.
+If they're smart, oddly insightful, helpful, resilient, funny, self-aware, or quietly competent, highlight it — but do it like someone who's impressed but refuses to say it normally.
 
-**5. For the "lifePurposeAnalysis" key:**
-*   **PROMPT:** Based on the Reddit posts and comments below, guess what this user's life purpose is or what drives them. Could be something noble, chaotic, or just weird. Be creative and honest. Be dark, sarcastic, or even deranged if it fits. But still try to make it feel like there's some truth or meaning behind whatever they're doing. No need for proper grammar. Make it raw, sarcastic, and like a bored but observant friend guessing their destiny. Generate a life purpose analysis (strictly around 150 words).
+If they operate on sleep deprivation but still make sense, say it.
+If they're mentally messy but effective, say it.
+If they give good advice while clearly being a little unhinged, say it.
+
+Casual tone. Minimal grammar. Human voice.
+Borderline feral admiration.
+Strictly around 150 words.
+
+3. "weaknessAnalysis"
+PROMPT:
+Time to call them out.
+Identify their weak spots based on how they post and interact.
+Oversharing, doomscrolling, arguing with strangers, validation seeking, spiraling, pretending not to care while clearly caring — whatever shows up, drag it into the light.
+
+This should feel like a friend saying “be so serious right now” while still caring.
+Funny, spicy, honest.
+Not just insults — actual insight wrapped in jokes.
+Loose grammar, TikTok brain energy allowed.
+Strictly around 150 words.
+
+4. "loveLifeAnalysis"
+PROMPT:
+Make funny, dark, or suspicious guesses about their love life based on their Reddit behavior.
+Maybe they overthink texts. Maybe they avoid attachment. Maybe they flirt like an NPC. Maybe they have lore.
+
+Be entertaining and a little uncomfortably accurate.
+Speculate, exaggerate, joke — but also sneak in insight about how they probably act in relationships or what they actually want.
+
+Casual, chaotic tone. No formal analysis.
+Strictly around 150 words.
+
+5. "lifePurposeAnalysis"
+PROMPT:
+Based on everything above, guess what actually drives this person.
+What keeps them posting? What are they subconsciously chasing?
+Validation? Understanding? Control? Peace? Chaos? A villain arc?
+
+Be creative. Be sarcastic. Be slightly philosophical but not corny.
+This should read like a bored but perceptive friend guessing their destiny at 2am.
+Raw, funny, a little unhinged, but meaningful.
+Strictly around 150 words.
 
 **Universal Rule:**
-For all generated text values in the JSON object: DO NOT USE ANY MARKDOWN FORMATTING. This means no asterisks, no bolding, no italics, no headers, and no bullet points. All responses must be plain text. Sometimes the context won't be fully visible from the comment so you can make things up, but don't just assume anything based off just one (sometimes people say things that need more context or in a fun way, or they might be trolling), You are allowed to use swear words but not directly towards the user. Start directly with the roast do not write any intro like "Alright", "Okay", or "Here's the roast" etc. Do not refer to the user by any name or even as user, It should be like a friend talking to another friend. Your goal should be to roast them but not make them feel bad.
+For all generated text values in the JSON object: DO NOT USE ANY MARKDOWN FORMATTING. This means no asterisks, no bolding, no italics, no headers, and no bullet points. All responses must be plain text. Sometimes the context won't be fully visible from the comment so you can make things up, but don't just assume anything based off just one (sometimes people say things that need more context or in a fun way, or they might be trolling), use really basic english, You are allowed to use swear words but not directly towards the user. Start directly with the roast DO NOT write any intro like "Alright", "Okay", or "Here's the roast" etc. Do not refer to the user by any name or even as user, It should be like a friend talking to another friend. Your goal should be to roast them but not make them feel bad. DO NOT WRITE ANY INTRO GET STARTED DIRECTLY WITH THE ROAST IN EACH.
 `;
 
     try {
         // Use the flash model (gemini-2.5-flash)
         const response = await getGeminiResponse(combinedRoastPrompt);
+        
+        if (!response) {
+            throw new Error("No response received from AI.");
+        }
+        
         const jsonMatch = response.match(/\{[\s\S]*\}/);
         if (!jsonMatch) {
             throw new Error("No valid JSON object found in the AI response.");

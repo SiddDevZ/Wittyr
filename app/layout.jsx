@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
+import SmoothScroll from "@/components/SmoothScroll";
 
 export const metadata = {
   title: "Reddit Profile Roaster",
@@ -10,6 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <SmoothScroll />
         {children}
       </body>
     </html>

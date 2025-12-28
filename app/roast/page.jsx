@@ -444,7 +444,7 @@ export default function RoastPage() {
               {isComplete && (
                 <div className="text-center mt-12 mb-10">
                   <div className="text-black/60 font-mono text-sm">
-                    That's all! 🎉
+                    That's all! Redirecting you now. 🎉
                   </div>
                 </div>
               )}

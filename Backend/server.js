@@ -26,7 +26,7 @@ mongoose.connect(dbUrl)
     process.exit(1);
   });
 
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 3001;
 
 app.get('/', (c) => c.text('Hello World!'));
 
