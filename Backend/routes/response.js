@@ -7,13 +7,45 @@ const router = new Hono()
 
 const limiter = rateLimiter({
   windowMs: 40 * 60 * 1000,
-  limit: 20, 
+  limit: 5, 
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (c) => c.req.header('x-forwarded-for') || c.req.ip,
 })
 
 async function getGeminiResponse(prompt, retryCount = 0, useProModel = false) {
+  if (process.env.OPENROUTER_API_KEY) {
+    try {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://wittyr.com",
+          "X-Title": "Wittyr",
+        },
+        body: JSON.stringify({
+          "model": "google/gemini-3-flash-preview",
+          "messages": [
+            {
+              "role": "user",
+              "content": prompt
+            }
+          ]
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.choices[0].message.content;
+      } else {
+        console.error("OpenRouter API failed, falling back to Google API Keys:", response.status);
+      }
+    } catch (error) {
+      console.error("OpenRouter Request Error, falling back:", error);
+    }
+  }
+
   const API_KEYS = process.env.API_KEYS 
     ? process.env.API_KEYS.split(',').map(key => key.trim()).filter(Boolean)
     : []
