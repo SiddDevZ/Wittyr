@@ -47,13 +47,13 @@ const SAMPLE_ROASTS = [
     reactionSentiment: "Nerdy"
   },
   {
-      username: "u/CodeNinja_Zero",
-      roastLevel: "StackOverflow Copy-Paster",
-      emoji: "💻",
-      roast: "You haven't written a line of original code since 2019. Your GitHub is green only because you wrote a script to commit empty files. You tell people you use Arch Linux just to feel something. You're not a senior developer, you're just senior at Googling error messages.",
-      tags: ['#ItWorksOnMyMachine', '#VimUser (Lies)', '#SpaghettiCode'],
-      reaction: "I feel personally attacked. Also, I use Manjaro now, it's basically Arch but stable!! And copilot wrote this response. 🤖",
-      reactionSentiment: "Exposed"
+      username: "u/Relationship_Guru_247",
+      roastLevel: "Single Pringle",
+      emoji: "💔",
+      roast: "You write 5000-word essays on r/relationship_advice analyzing 'red flags' in strangers' marriages, yet your own longest relationship was with a sourdough starter during lockdown. You treat human connection like a math problem where the answer is always 'Break Up' and 'Hit the Gym'.",
+      tags: ['#DivorceLawyerWannabe', '#ProjectingHard', '#RedFlagCollector'],
+      reaction: "Excuse me? Seeing red flags is a survival skill. And my sourdough, yeast-fer-sutherland, was a very fulfilling partner. 🥖",
+      reactionSentiment: "Defensive"
   }
 ];
 
@@ -358,7 +358,19 @@ function PageContent() {
             <div className="flex items-center space-x-3">
               {/* <ThemeToggle /> */}
             </div>
-            <div className="max-w-md"></div>
+            <a 
+              href="https://bags.fm/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center text-[#00b824] gap-1.5 px-3 py-1.5 font-bold rounded-lg p-4 pr-5 transition-all ease-out active:scale-[0.98]"
+              style={{ 
+                backgroundColor: 'rgba(0, 182, 36, 0.2)', 
+                border: '1px solid rgba(0, 182, 36, 0.35)' 
+              }}
+            >
+              <img src="https://bags.fm/assets/images/bags-icon.png" className="w-4 h-4" alt="" />
+              $WITR
+            </a>
           </div>
         </div>
       )}
@@ -374,7 +386,7 @@ function PageContent() {
           <div className="max-w-5xl mb-16 mt-24 sm:mt-20 w-full text-center">
             <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-white border border-gray-200 shadow-sm mb-7">
               <span className="w-2 h-2 rounded-full bg-green-400 mr-2"></span>
-              <span className="text-xs font-bold text-gray-600 uppercase tracking-widest font-space">Chronically Redditor v2.0</span>
+              <span className="text-xs font-bold text-gray-600 uppercase tracking-widest font-space">Introducting Wittyr v2.0</span>
             </div>
             
             <h1 className="font-space text-4xl sm:text-7xl md:text-7xl max-w-[45rem] mx-auto font-bold tracking-tighter text-gray-900 mb-8 leading-[0.9]">
