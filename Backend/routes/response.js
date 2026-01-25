@@ -14,6 +14,30 @@ const limiter = rateLimiter({
 })
 
 async function getGeminiResponse(prompt, retryCount = 0, useProModel = false) {
+  if (process.env.GEMINI) {
+    try {
+      const modelName = useProModel ? "gemini-3-flash-preview" : "gemini-3-flash-preview";
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI}`;
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }]
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        return result.candidates[0].content.parts[0].text;
+      } else {
+        console.warn("GEMINI env key failed, falling back:", response.status);
+      }
+    } catch (error) {
+      console.warn("GEMINI env key error, falling back:", error.message);
+    }
+  }
+
   if (process.env.OPENROUTER_API_KEY) {
     try {
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
