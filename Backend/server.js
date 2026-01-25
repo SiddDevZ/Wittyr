@@ -12,7 +12,9 @@ const app = new Hono();
 app.use('*', cors({
   origin: [
     'https://roast.siddz.com',
-    'http://localhost:3000', // Uncomment for local testing
+    'https://wittyr.com',
+    'https://www.wittyr.com',
+    // 'http://localhost:3000', // Uncomment for local testing
   ],
   credentials: true,
 }));
