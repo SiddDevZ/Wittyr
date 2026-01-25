@@ -37,6 +37,19 @@ export default function Background({ reduced = false }) {
         {!reduced && <div className="absolute top-[90%] right-[3%] md:right-[8%] text-5xl md:text-7xl opacity-10 animate-float-slow delay-4000 hover:opacity-40 transition-opacity duration-300">🗑️</div>}
         <div className="absolute top-[15%] right-[8%] md:right-[15%] text-3xl md:text-6xl opacity-15 animate-float-medium delay-2000 hover:opacity-40 transition-opacity duration-300 hidden md:block">👀</div>
         {!reduced && <div className="absolute top-[33%] right-[5%] md:right-[20%] text-2xl md:text-5xl opacity-20 animate-float-fast delay-1200 hover:opacity-40 transition-opacity duration-300 hidden md:block">🤌</div>}
+
+        {/* Bottom Section - New emojis for extended page */}
+        <div className="absolute top-[95%] left-[3%] md:left-[6%] text-4xl md:text-6xl opacity-15 animate-float-slow delay-1500 hover:opacity-40 transition-opacity duration-300">💀</div>
+        {!reduced && <div className="absolute top-[105%] left-[10%] md:left-[15%] text-3xl md:text-5xl opacity-10 animate-float-fast delay-2800 hover:opacity-40 transition-opacity duration-300 hidden md:block">🎭</div>}
+        <div className="absolute top-[115%] right-[2%] md:right-[5%] text-4xl md:text-6xl opacity-15 animate-float-medium delay-3200 hover:opacity-40 transition-opacity duration-300">💔</div>
+        {!reduced && <div className="absolute top-[100%] right-[12%] md:right-[18%] text-3xl md:text-5xl opacity-10 animate-float-slow delay-1800 hover:opacity-40 transition-opacity duration-300 hidden md:block">🧊</div>}
+        <div className="absolute top-[110%] left-[1%] md:left-[4%] text-5xl md:text-7xl opacity-10 animate-float-medium delay-2200 hover:opacity-40 transition-opacity duration-300">🔥</div>
+        {!reduced && <div className="absolute top-[120%] left-[8%] md:left-[12%] text-3xl md:text-5xl opacity-15 animate-float-fast delay-3600 hover:opacity-40 transition-opacity duration-300 hidden md:block">😵</div>}
+        <div className="absolute top-[125%] right-[3%] md:right-[7%] text-4xl md:text-6xl opacity-10 animate-float-slow delay-2600 hover:opacity-40 transition-opacity duration-300">☠️</div>
+        {!reduced && <div className="absolute top-[108%] left-[20%] md:left-[25%] text-3xl md:text-5xl opacity-15 animate-float-medium delay-1400 hover:opacity-40 transition-opacity duration-300 hidden md:block">🤡</div>}
+        <div className="absolute top-[118%] right-[15%] md:right-[20%] text-4xl md:text-6xl opacity-10 animate-float-fast delay-3000 hover:opacity-40 transition-opacity duration-300 hidden md:block">🪦</div>
+        {!reduced && <div className="absolute top-[130%] left-[5%] md:left-[8%] text-3xl md:text-5xl opacity-15 animate-float-slow delay-2000 hover:opacity-40 transition-opacity duration-300 hidden md:block">💅</div>}
+        <div className="absolute top-[135%] right-[1%] md:right-[4%] text-4xl md:text-6xl opacity-10 animate-float-medium delay-3400 hover:opacity-40 transition-opacity duration-300">🗿</div>
       </div>
     </>
   );

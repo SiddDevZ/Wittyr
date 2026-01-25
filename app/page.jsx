@@ -1,13 +1,61 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Terminal } from "lucide-react";
+import { Terminal, ChevronLeft, ChevronRight } from "lucide-react";
 import UsernameForm from "@/components/UsernameForm";
 import Footer from "@/components/Footer";
 import ThemeToggle from "@/components/ThemeToggle";
 import Background from "@/components/Background";
 import { Toaster, toast } from "sonner";
 import config from '../config.json';
+
+const SAMPLE_ROASTS = [
+  {
+    username: "u/CryptoGod_69",
+    roastLevel: "Critical",
+    emoji: "🥀",
+    roast: "You claim to be a 'visionary investor' in r/WallStreetBets but your post history is just you asking r/povertyfinance how to make ramen last for three days. You talk about 'HODLing' like it's a war strategy, but really you just lost the seed phrase to your wallet in 2021. Your personality is 50% Elon Musk retweet and 50% desperate validation seeking.",
+    tags: ['#BagHolder', '#PaperHands', '#ToTheMoon...Eventually'],
+    reaction: "WTF?? This is literally harassment. I actually prefer instant noodles over ramen for the sodium content. And I didn't lose my keys, I'm just forcing a long-term hold!! 🥀",
+    reactionSentiment: "Angry"
+  },
+  {
+    username: "u/GymRat_Chad",
+    roastLevel: "Steroid-Fueled",
+    emoji: "💪",
+    roast: "Your entire personality is built around lifting heavy circles to quiet the voices in your head. You post 'form checks' solely to fish for compliments on your vascularity. You're one missed meal prep away from a complete existential breakdown. We get it, you lift. But maybe lift a book occasionally?",
+    tags: ['#NeverLegDay', '#ProteinFarts', '#GymCrushDreams'],
+    reaction: "Bro... why you gotta come at me like that? I read... I read the nutrition labels. That counts right? 🥺",
+    reactionSentiment: "Sad"
+  },
+   {
+    username: "u/TravelBabe_99",
+    roastLevel: "Wanderlust-Cringe",
+    emoji: "✈️",
+    roast: "You call yourself a 'digital nomad' but you've been in the same Bali hostel for 6 months living off your parents' allowance. Your 'authentic travel experiences' are just queued Instagram posts of açai bowls. You think you're finding yourself, but you're just finding new backgrounds for selfies.",
+    tags: ['#Blessed', '#RemoteWork', '#VanLifeDreams'],
+    reaction: "Omg stop. I am literally shaking. My journey is valid!! And for the record, it's a co-living space, not a hostel. 💅",
+    reactionSentiment: "Defensive"
+  },
+  {
+    username: "u/IncelTears_Warrior",
+    roastLevel: "Touch Grass",
+    emoji: "⚔️",
+    roast: "You spend 18 hours a day arguing about gender politics on Reddit while your own love life is a 404 error. You have strong opinions on relationships for someone whose only intimate contact is with a mechanical keyboard. Your 'Logic and Reason' is just a mask for being terrified of eye contact.",
+    tags: ['#WhiteKnight', '#ForeverAlone', '#DebateMeBro'],
+    reaction: "Actually, statistically speaking, my points are valid. I don't need ad hominem attacks to prove my intellectual superiority. *pushes up glasses* 🤓",
+    reactionSentiment: "Nerdy"
+  },
+  {
+      username: "u/CodeNinja_Zero",
+      roastLevel: "StackOverflow Copy-Paster",
+      emoji: "💻",
+      roast: "You haven't written a line of original code since 2019. Your GitHub is green only because you wrote a script to commit empty files. You tell people you use Arch Linux just to feel something. You're not a senior developer, you're just senior at Googling error messages.",
+      tags: ['#ItWorksOnMyMachine', '#VimUser (Lies)', '#SpaghettiCode'],
+      reaction: "I feel personally attacked. Also, I use Manjaro now, it's basically Arch but stable!! And copilot wrote this response. 🤖",
+      reactionSentiment: "Exposed"
+  }
+];
 
 function PageContent() {
   const [isSliding, setIsSliding] = useState(false);
@@ -21,6 +69,69 @@ function PageContent() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isTrainingComplete, setIsTrainingComplete] = useState(false);
   const [isStuck, setIsStuck] = useState(false);
+
+  // Carousel State
+  const [activeRoastIndex, setActiveRoastIndex] = useState(0);
+  const [roastProgress, setRoastProgress] = useState(0);
+  const [shuffledRoasts, setShuffledRoasts] = useState([]);
+  const [slideDirection, setSlideDirection] = useState('right'); // 'left' or 'right'
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
+  useEffect(() => {
+    // Shuffle roasts on mount to ensure randomness
+    setShuffledRoasts([...SAMPLE_ROASTS].sort(() => Math.random() - 0.5));
+  }, []);
+
+  useEffect(() => {
+    if (shuffledRoasts.length === 0 || isTransitioning) return;
+
+    const interval = 100; // Update every 100ms
+    const duration = 10000; // 10 seconds per slide
+    const progressStep = (interval / duration) * 100;
+
+    const timer = setInterval(() => {
+      setRoastProgress(prev => {
+        if (prev >= 100) {
+          handleAutoSlide();
+          return 0;
+        }
+        return prev + progressStep;
+      });
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [shuffledRoasts, isTransitioning]);
+
+  const handleAutoSlide = () => {
+    changeSlide('next');
+  };
+
+  const changeSlide = (direction) => {
+    if (isTransitioning) return;
+    
+    setSlideDirection(direction);
+    setIsTransitioning(true);
+    setRoastProgress(0);
+
+    // Wait for exit animation
+    setTimeout(() => {
+      if (direction === 'next') {
+        setActiveRoastIndex(curr => (curr + 1) % shuffledRoasts.length);
+      } else {
+        setActiveRoastIndex(curr => (curr - 1 + shuffledRoasts.length) % shuffledRoasts.length);
+      }
+      
+      // Allow entering animation to play
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 50); 
+    }, 300); // Match CSS transition duration
+  };
+
+  const handleManualRoastChange = (direction) => {
+    changeSlide(direction);
+  };
 
   useEffect(() => {
     const handleRoastComplete = () => {
@@ -379,6 +490,248 @@ function PageContent() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* How It Works Section */}
+            <div className="mt-32 max-w-5xl mx-auto px-4">
+               <div className="text-center mb-16">
+                  <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-red-50 border border-red-100 shadow-sm mb-6">
+                     <span className="text-xs font-bold text-red-600 uppercase tracking-widest font-space">The Disassembly Line</span>
+                  </div>
+                  <h2 className="font-space text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-4">
+                    From Data to Destruction
+                  </h2>
+                  <p className="font-outfit text-lg text-gray-500 max-w-2xl mx-auto">
+                    A three-step process designed to dismantle your self-esteem efficiently.
+                  </p>
+               </div>
+               
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  
+                  {[
+                    { 
+                      step: "01", 
+                      emoji: "🕵️‍♂️",
+                      title: "Stalking Your Profile", 
+                      desc: "We scrape every public comment, post, and embarrassing question you've ever asked on r/relationship_advice. We see it all.",
+                      color: "text-blue-600",
+                      bg: "bg-blue-50 border-blue-100"
+                    },
+                    { 
+                      step: "02", 
+                      emoji: "🧠",
+                      title: "Psychoanalysis", 
+                      desc: "Our AI judges your grammar, your politics, and your desperate need for karma. It builds a psychological profile of a person.",
+                      color: "text-purple-600",
+                      bg: "bg-purple-50 border-purple-100" 
+                    },
+                    { 
+                      step: "03", 
+                      emoji: "🔥",
+                      title: "Emotional Damage", 
+                      desc: "We generate a customized roast that targets your specific insecurities. It's not cyberbullying if it's true (legal told us to say this).",
+                      color: "text-orange-600",
+                      bg: "bg-orange-50 border-orange-100"
+                    }
+                  ].map((item, i) => (
+                    <div key={i} className={`relative flex flex-col items-start text-left group bg-white border border-gray-100 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden`}>
+                      <div className={`absolute top-0 right-0 p-8 opacity-10 font-space font-bold text-6xl text-gray-900 select-none group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500`}>
+                        {item.step}
+                      </div>
+                      
+                      <div className={`w-14 h-14 ${item.bg} border ${item.color} rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-sm group-hover:scale-110 transition-transform duration-300 relative z-10`}>
+                        {item.emoji}
+                      </div>
+
+                      <h3 className="font-space font-bold text-xl text-gray-900 mb-3 relative z-10">{item.title}</h3>
+                      <p className="text-gray-500 font-outfit text-base leading-relaxed relative z-10">{item.desc}</p>
+                    </div>
+                  ))}
+               </div>
+            </div>
+
+            {/* Sample Roast Section - Vercel Style */}
+            <div className="mt-32 max-w-4xl mx-auto px-4">
+              <div className="text-center mb-12">
+                   <h2 className="font-space text-3xl font-bold text-gray-900 mb-2">The Hall of Shame</h2>
+                   <p className="font-outfit text-gray-500">Witness the casualties of truth. You're next.</p>
+              </div>
+
+              {shuffledRoasts.length > 0 && (
+                <div 
+                  className="relative group min-h-[460px] sm:min-h-[420px]" 
+                >
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-gray-200 to-gray-100 rounded-2xl blur opacity-20 transition duration-500"></div>
+                  
+                  {/* Active Slide Content */}
+                  <div className="relative">
+                    <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm transition-all duration-500 min-h-[340px] flex flex-col justify-between overflow-hidden">
+                       <div 
+                         key={activeRoastIndex} 
+                         className={`transition-all duration-300 ease-in-out ${
+                           isTransitioning 
+                              ? slideDirection === 'next' 
+                                ? '-translate-x-10 opacity-0' 
+                                : 'translate-x-10 opacity-0'
+                              : 'translate-x-0 opacity-100'
+                         }`}
+                       >
+                         <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
+                            <div className="flex items-center gap-4">
+                               <div className="w-12 h-12 bg-gradient-to-tr from-gray-50 to-white border border-gray-100 rounded-full flex items-center justify-center text-xl shadow-sm shrink-0">
+                                 {shuffledRoasts[activeRoastIndex].emoji}
+                               </div>
+                               <div className="text-left">
+                                 <div className="font-space font-bold text-gray-900 text-lg">{shuffledRoasts[activeRoastIndex].username}</div>
+                                 <div className="font-mono text-xs text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                   <span className="hidden mt-1 sm:inline">Roast Level:</span> 
+                                   <span className="text-red-500 mt-1 font-bold bg-red-50 px-2 py-0.5 rounded-full">{shuffledRoasts[activeRoastIndex].roastLevel}</span>
+                                 </div>
+                               </div>
+                            </div>
+                         </div>
+                         
+                         <p className="font-pop text-gray-600 leading-relaxed text-lg mb-8">
+                           "{shuffledRoasts[activeRoastIndex].roast}"
+                         </p>
+      
+                         <div className="flex flex-wrap gap-2">
+                            {shuffledRoasts[activeRoastIndex].tags.map((tag) => (
+                              <span key={tag} className="px-3 py-1 bg-gray-50 border border-gray-100 rounded-full text-xs font-mono text-gray-500">
+                                {tag}
+                              </span>
+                            ))}
+                         </div>
+                       </div>
+                    </div>
+      
+                    {/* Reaction Card */}
+                    <div 
+                      key={`reaction-${activeRoastIndex}`} 
+                      className={`
+                        mt-4 sm:mt-0 sm:absolute sm:-right-8 sm:-bottom-6 sm:max-w-md 
+                        bg-gray-50 rounded-2xl border border-gray-200 p-6 
+                        relative z-20 shadow-lg sm:rotate-1 sm:transform
+                        transition-all duration-500 ease-in-out
+                        ${isTransitioning 
+                            ? 'opacity-0 translate-y-4' 
+                            : 'opacity-100 translate-y-0'
+                        }
+                      `}
+                    >
+                       <div className="flex items-center gap-3 mb-2">
+                          <div className="flex-1 font-space font-bold text-gray-900 text-sm">{shuffledRoasts[activeRoastIndex].username}</div>
+                          <span className="text-xs text-gray-400">just now</span>
+                       </div>
+                       <p className="font-outfit text-gray-700 text-sm italic">
+                         <span className="text-red-500 font-bold mr-1 not-italic">{shuffledRoasts[activeRoastIndex].reactionSentiment === 'Angry' ? 'WTF??' : shuffledRoasts[activeRoastIndex].reactionSentiment === 'Sad' ? 'Ouch.' : shuffledRoasts[activeRoastIndex].reactionSentiment === 'Defensive' ? 'Excuse me?' : 'Uhm...'}</span>
+                         {shuffledRoasts[activeRoastIndex].reaction}
+                       </p>
+                    </div>
+
+                    {/* Controls & Progress */}
+                    <div className="mt-8 flex items-center justify-between px-1 sm:px-4">
+                      <div className="flex items-center gap-4">
+                          <button 
+                            onClick={() => handleManualRoastChange('prev')}
+                            className="p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-colors cursor-pointer"
+                            disabled={isTransitioning}
+                          >
+                            <ChevronLeft size={20} />
+                          </button>
+                          
+                          <div className="h-1 w-32 sm:w-48 bg-gray-100 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gray-900 transition-all duration-100 ease-linear rounded-full"
+                              style={{ width: `${roastProgress}%` }}
+                            ></div>
+                          </div>
+
+                          <button 
+                            onClick={() => handleManualRoastChange('next')}
+                            className="p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-colors cursor-pointer"
+                            disabled={isTransitioning}
+                          >
+                            <ChevronRight size={20} />
+                          </button>
+                      </div>
+                      <div className="font-mono text-xs text-gray-400">
+                        {activeRoastIndex + 1} / {shuffledRoasts.length}
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* FAQ Section - Onavix Inspired Clean Card */}
+            <div className="mt-32 mb-24 max-w-3xl mx-auto px-6">
+                <div className="text-center mb-12">
+                     <h2 className="font-space text-2xl font-bold text-gray-900 mb-2">The Damage Control Desk</h2>
+                     <p className="font-outfit text-gray-500">Questions from those in denial.</p>
+                </div>
+                
+                <div className="w-full border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm">
+                    {[
+                        { 
+                          q: "How does this magic work?", 
+                          a: "Our AI scrapes all your comments and posts. It analyzes your most active communities, and embarrassing comments to craft a personalized reality check." 
+                        },
+                        { 
+                          q: "Is my data safe with you?", 
+                          a: "100%, We don't want your data. Have you seen your post history? It's mostly cat memes and bad financial advice. We process it and flush it immediately." 
+                        },
+                        { 
+                          q: "Is this tool really free?", 
+                          a: "It costs literally $0 but your ego might never recover." 
+                        },
+                        { 
+                          q: "Can I roast private accounts?", 
+                          a: "Nope. We can't roast ghosts. If your account is private, you're safe from us. We need public posts to fuel the roast engine, so open the gates if you want the smoke." 
+                        },
+                        { 
+                          q: "Why is it so mean?", 
+                          a: "It's called tough love babe. The AI is trained to be satirical towards your Reddit habits. If it hits a little too close to home, maybe it's time to close the app and touch grass." 
+                        },
+                        { 
+                          q: "Can I share the punishment?", 
+                          a: "If you get cooked, you might as well get some clout for it. Share it on social media, group chats, or send it to your mom so she finally understands why you're single." 
+                        }
+                    ].map((item, i, arr) => (
+                        <div 
+                          key={i} 
+                          onClick={() => setOpenFaqIndex(openFaqIndex === i ? null : i)}
+                          className={`group transition-colors duration-200 cursor-pointer ${i !== arr.length - 1 ? 'border-b border-gray-100' : ''} ${openFaqIndex === i ? 'bg-gray-50/50' : 'bg-white'}`}
+                        >
+                            <div
+                              className="w-full flex items-center justify-between px-6 py-4 text-left focus:outline-none"
+                            >
+                              <span className="font-space font-medium text-gray-900 text-lg md:text-xl">{item.q}</span>
+                              <span className={`flex-shrink-0 ml-4 flex items-center justify-center w-8 h-8 rounded-full text-gray-400 transition-all duration-300 ${openFaqIndex === i ? 'rotate-45' : 'rotate-0'}`}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M12 5V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                </svg>
+                              </span>
+                            </div>
+                            
+                            <div 
+                              className={`grid transition-all duration-300 ease-in-out ${
+                                openFaqIndex === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                              }`}
+                            >
+                              <div className="overflow-hidden">
+                                <div className="px-6 pb-5 pt-0">
+                                  <p className="text-gray-500 font-outfit leading-relaxed text-sm md:text-base text-left">
+                                    {item.a}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
 
           </div>

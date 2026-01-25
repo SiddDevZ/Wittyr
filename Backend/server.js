@@ -12,7 +12,7 @@ const app = new Hono();
 app.use('*', cors({
   origin: [
     'https://roast.siddz.com',
-    // 'http://localhost:3000', // Uncomment for local testing
+    'http://localhost:3000', // Uncomment for local testing
   ],
   credentials: true,
 }));

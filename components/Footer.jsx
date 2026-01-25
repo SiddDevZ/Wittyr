@@ -46,7 +46,7 @@ export default function Footer() {
             <span className="text-xs tracking-wider font-medium">
               2025 | A PROJECT BY{' '}
               <a 
-                href="https://siddz.com" 
+                href="https://x.com/buildwithsid" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-blue-300 duration-200 cursor-pointer underline underline-offset-3"
