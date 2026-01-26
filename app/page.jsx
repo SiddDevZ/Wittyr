@@ -173,7 +173,7 @@ function PageContent() {
               {/* <ThemeToggle /> */}
             </div>
             <a 
-              href="https://bags.fm/DsE8hdh7PJUouuss5C8SeeuQtYfzb5ByteJhRSuBBAGS" 
+              href="https://bags.fm/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center text-[#00b824] gap-1.5 px-3 py-1.5 font-bold rounded-lg p-4 pr-5 transition-all ease-out active:scale-[0.98]"
