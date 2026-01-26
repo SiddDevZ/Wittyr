@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Terminal, ChevronLeft, ChevronRight } from "lucide-react";
 import UsernameForm from "@/components/UsernameForm";
 import Footer from "@/components/Footer";
-import ThemeToggle from "@/components/ThemeToggle";
 import Background from "@/components/Background";
 import { Toaster, toast } from "sonner";
 import config from '../config.json';
+import RoastCarousel from "@/components/RoastCarousel";
+import FAQ from "@/components/FAQ";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 const SAMPLE_ROASTS = [
   {
@@ -63,76 +64,6 @@ function PageContent() {
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [hasApiError, setHasApiError] = useState(false);
 
-  const [loadingStep, setLoadingStep] = useState(0);
-  const [trainingCount, setTrainingCount] = useState(0);
-  const [finalizationProgress, setFinalizationProgress] = useState(0);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [isTrainingComplete, setIsTrainingComplete] = useState(false);
-  const [isStuck, setIsStuck] = useState(false);
-
-  // Carousel State
-  const [activeRoastIndex, setActiveRoastIndex] = useState(0);
-  const [roastProgress, setRoastProgress] = useState(0);
-  const [shuffledRoasts, setShuffledRoasts] = useState([]);
-  const [slideDirection, setSlideDirection] = useState('right'); // 'left' or 'right'
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [openFaqIndex, setOpenFaqIndex] = useState(null);
-
-  useEffect(() => {
-    // Shuffle roasts on mount to ensure randomness
-    setShuffledRoasts([...SAMPLE_ROASTS].sort(() => Math.random() - 0.5));
-  }, []);
-
-  useEffect(() => {
-    if (shuffledRoasts.length === 0 || isTransitioning) return;
-
-    const interval = 100; // Update every 100ms
-    const duration = 10000; // 10 seconds per slide
-    const progressStep = (interval / duration) * 100;
-
-    const timer = setInterval(() => {
-      setRoastProgress(prev => {
-        if (prev >= 100) {
-          handleAutoSlide();
-          return 0;
-        }
-        return prev + progressStep;
-      });
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [shuffledRoasts, isTransitioning]);
-
-  const handleAutoSlide = () => {
-    changeSlide('next');
-  };
-
-  const changeSlide = (direction) => {
-    if (isTransitioning) return;
-    
-    setSlideDirection(direction);
-    setIsTransitioning(true);
-    setRoastProgress(0);
-
-    // Wait for exit animation
-    setTimeout(() => {
-      if (direction === 'next') {
-        setActiveRoastIndex(curr => (curr + 1) % shuffledRoasts.length);
-      } else {
-        setActiveRoastIndex(curr => (curr - 1 + shuffledRoasts.length) % shuffledRoasts.length);
-      }
-      
-      // Allow entering animation to play
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 50); 
-    }, 300); // Match CSS transition duration
-  };
-
-  const handleManualRoastChange = (direction) => {
-    changeSlide(direction);
-  };
-
   useEffect(() => {
     const handleRoastComplete = () => {
       setShouldRedirect(true);
@@ -143,12 +74,6 @@ function PageContent() {
 
       setShowLoadingPage(false);
       setIsSliding(false);
-      setLoadingStep(0);
-      setTrainingCount(0);
-      setFinalizationProgress(0);
-      setIsInitialized(false);
-      setIsTrainingComplete(false);
-      setIsStuck(false);
     };
 
     const handleResetHomepage = () => {
@@ -156,12 +81,6 @@ function PageContent() {
       setShowLoadingPage(false);
       setShouldRedirect(false);
       setHasApiError(false);
-      setLoadingStep(0);
-      setTrainingCount(0);
-      setFinalizationProgress(0);
-      setIsInitialized(false);
-      setIsTrainingComplete(false);
-      setIsStuck(false);
     };
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -219,130 +138,25 @@ function PageContent() {
     };
   }, []);
 
-  useEffect(() => {
-    if (shouldRedirect && finalizationProgress >= 100) {
-      setTimeout(() => {
-        window.location.href = '/roast';
-      }, 1000);
-    }
-  }, [shouldRedirect, finalizationProgress]);
-
   const handleFormSubmit = () => {
     setIsSliding(true);
     setTimeout(() => {
       setShowLoadingPage(true);
-      startLoadingSequence();
     }, 800);
-  };
-
-  const startLoadingSequence = () => {
-    setTimeout(() => {
-      setIsInitialized(true);
-      setLoadingStep(1);
-      startTraining();
-    }, 2300);
-  };
-
-  const startTraining = () => {
-    const targetCount = 79032;
-    const duration = 12000;
-    const startTime = Date.now();
-    
-    const updateCount = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      
-      const currentCount = Math.floor(targetCount * progress);
-      
-      setTrainingCount(currentCount);
-      
-      if (progress < 1) {
-        setTimeout(updateCount, 50);
-      } else {
-        setTrainingCount(targetCount);
-        setIsTrainingComplete(true);
-        setTimeout(() => {
-          setLoadingStep(2);
-          startFinalization();
-        }, 1300);
-      }
-    };
-    
-    updateCount();
-  };
-
-  const startFinalization = () => {
-    const duration = 15600; // 30% slower (12000 * 1.3)
-    const startTime = Date.now();
-    let lastShouldRedirect = false;
-    let isFinishing = false;
-    let finishStartTime = 0;
-    
-    const isResponseReceived = () => {
-      return localStorage.getItem('roastData') !== null || shouldRedirect;
-    };
-    
-    const updateProgress = () => {
-      const responseReceived = isResponseReceived();
-
-      if (responseReceived && !isFinishing) {
-        isFinishing = true;
-        finishStartTime = Date.now();
-        setIsStuck(false);
-      }
-      
-      let progress;
-      
-      if (isFinishing) {
-        const finishElapsed = Date.now() - finishStartTime;
-        const finishDuration = 1040;
-
-        const currentProgress = finalizationProgress / 100;
-
-        const t = Math.min(finishElapsed / finishDuration, 1);
-        const easeOutQuad = t * (2 - t);
-
-        progress = currentProgress + (1 - currentProgress) * easeOutQuad;
-      } else {
-        const elapsed = Date.now() - startTime;
-        progress = Math.min(elapsed / duration, 1);
-
-        if (progress >= 0.9) {
-          progress = 0.9;
-          if (!isStuck) {
-            setIsStuck(true);
-          }
-        }
-      }
-
-      setFinalizationProgress(Math.floor(progress * 100));
-      
-      if (progress < 1) {
-        const interval = isFinishing ? 16 : 100;
-        setTimeout(updateProgress, interval);
-      }
-    };
-    
-    updateProgress();
   };
 
   useEffect(() => {
     if (hasApiError) {
-      // toast.error('Failed to generate roast. Please try again.');
       setTimeout(() => {
         setShowLoadingPage(false);
         setIsSliding(false);
-        setLoadingStep(0);
-        setTrainingCount(0);
-        setFinalizationProgress(0);
-        setIsInitialized(false);
-        setIsTrainingComplete(false);
-        setIsStuck(false);
         setHasApiError(false);
         setShouldRedirect(false);
       }, 4000);
     }
   }, [hasApiError]);
+
+
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -359,7 +173,7 @@ function PageContent() {
               {/* <ThemeToggle /> */}
             </div>
             <a 
-              href="https://bags.fm/" 
+              href="https://bags.fm/DsE8hdh7PJUouuss5C8SeeuQtYfzb5ByteJhRSuBBAGS" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center text-[#00b824] gap-1.5 px-3 py-1.5 font-bold rounded-lg p-4 pr-5 transition-all ease-out active:scale-[0.98]"
@@ -369,7 +183,7 @@ function PageContent() {
               }}
             >
               <img src="https://bags.fm/assets/images/bags-icon.png" className="w-4 h-4" alt="" />
-              $WITR
+              $WITTY
             </a>
           </div>
         </div>
@@ -569,182 +383,12 @@ function PageContent() {
                    <p className="font-outfit text-gray-500">Witness the casualties of truth. You're next.</p>
               </div>
 
-              {shuffledRoasts.length > 0 && (
-                <div 
-                  className="relative group min-h-[460px] sm:min-h-[420px]" 
-                >
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-gray-200 to-gray-100 rounded-2xl blur opacity-20 transition duration-500"></div>
-                  
-                  {/* Active Slide Content */}
-                  <div className="relative">
-                    <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm transition-all duration-500 min-h-[340px] flex flex-col justify-between overflow-hidden">
-                       <div 
-                         key={activeRoastIndex} 
-                         className={`transition-all duration-300 ease-in-out ${
-                           isTransitioning 
-                              ? slideDirection === 'next' 
-                                ? '-translate-x-10 opacity-0' 
-                                : 'translate-x-10 opacity-0'
-                              : 'translate-x-0 opacity-100'
-                         }`}
-                       >
-                         <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-100">
-                            <div className="flex items-center gap-4">
-                               <div className="w-12 h-12 bg-gradient-to-tr from-gray-50 to-white border border-gray-100 rounded-full flex items-center justify-center text-xl shadow-sm shrink-0">
-                                 {shuffledRoasts[activeRoastIndex].emoji}
-                               </div>
-                               <div className="text-left">
-                                 <div className="font-space font-bold text-gray-900 text-lg">{shuffledRoasts[activeRoastIndex].username}</div>
-                                 <div className="font-mono text-xs text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                                   <span className="hidden mt-1 sm:inline">Roast Level:</span> 
-                                   <span className="text-red-500 mt-1 font-bold bg-red-50 px-2 py-0.5 rounded-full">{shuffledRoasts[activeRoastIndex].roastLevel}</span>
-                                 </div>
-                               </div>
-                            </div>
-                         </div>
-                         
-                         <p className="font-pop text-gray-600 leading-relaxed text-lg mb-8">
-                           "{shuffledRoasts[activeRoastIndex].roast}"
-                         </p>
-      
-                         <div className="flex flex-wrap gap-2">
-                            {shuffledRoasts[activeRoastIndex].tags.map((tag) => (
-                              <span key={tag} className="px-3 py-1 bg-gray-50 border border-gray-100 rounded-full text-xs font-mono text-gray-500">
-                                {tag}
-                              </span>
-                            ))}
-                         </div>
-                       </div>
-                    </div>
-      
-                    {/* Reaction Card */}
-                    <div 
-                      key={`reaction-${activeRoastIndex}`} 
-                      className={`
-                        mt-4 sm:mt-0 sm:absolute sm:-right-8 sm:-bottom-6 sm:max-w-md 
-                        bg-gray-50 rounded-2xl border border-gray-200 p-6 
-                        relative z-20 shadow-lg sm:rotate-1 sm:transform
-                        transition-all duration-500 ease-in-out
-                        ${isTransitioning 
-                            ? 'opacity-0 translate-y-4' 
-                            : 'opacity-100 translate-y-0'
-                        }
-                      `}
-                    >
-                       <div className="flex items-center gap-3 mb-2">
-                          <div className="flex-1 font-space font-bold text-gray-900 text-sm">{shuffledRoasts[activeRoastIndex].username}</div>
-                          <span className="text-xs text-gray-400">just now</span>
-                       </div>
-                       <p className="font-outfit text-gray-700 text-sm italic">
-                         <span className="text-red-500 font-bold mr-1 not-italic">{shuffledRoasts[activeRoastIndex].reactionSentiment === 'Angry' ? 'WTF??' : shuffledRoasts[activeRoastIndex].reactionSentiment === 'Sad' ? 'Ouch.' : shuffledRoasts[activeRoastIndex].reactionSentiment === 'Defensive' ? 'Excuse me?' : 'Uhm...'}</span>
-                         {shuffledRoasts[activeRoastIndex].reaction}
-                       </p>
-                    </div>
-
-                    {/* Controls & Progress */}
-                    <div className="mt-8 flex items-center justify-between px-1 sm:px-4">
-                      <div className="flex items-center gap-4">
-                          <button 
-                            onClick={() => handleManualRoastChange('prev')}
-                            className="p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-colors cursor-pointer"
-                            disabled={isTransitioning}
-                          >
-                            <ChevronLeft size={20} />
-                          </button>
-                          
-                          <div className="h-1 w-32 sm:w-48 bg-gray-100 rounded-full overflow-hidden">
-                            <div 
-                              className="h-full bg-gray-900 transition-all duration-100 ease-linear rounded-full"
-                              style={{ width: `${roastProgress}%` }}
-                            ></div>
-                          </div>
-
-                          <button 
-                            onClick={() => handleManualRoastChange('next')}
-                            className="p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-colors cursor-pointer"
-                            disabled={isTransitioning}
-                          >
-                            <ChevronRight size={20} />
-                          </button>
-                      </div>
-                      <div className="font-mono text-xs text-gray-400">
-                        {activeRoastIndex + 1} / {shuffledRoasts.length}
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              )}
+              <RoastCarousel roasts={SAMPLE_ROASTS} />
             </div>
 
             {/* FAQ Section - Onavix Inspired Clean Card */}
-            <div className="mt-32 mb-24 max-w-3xl mx-auto px-6">
-                <div className="text-center mb-12">
-                     <h2 className="font-space text-2xl font-bold text-gray-900 mb-2">The Damage Control Desk</h2>
-                     <p className="font-outfit text-gray-500">Questions from those in denial.</p>
-                </div>
-                
-                <div className="w-full border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm">
-                    {[
-                        { 
-                          q: "How does this magic work?", 
-                          a: "Our AI scrapes all your comments and posts. It analyzes your most active communities, and embarrassing comments to craft a personalized reality check." 
-                        },
-                        { 
-                          q: "Is my data safe with you?", 
-                          a: "100%, We don't want your data. Have you seen your post history? It's mostly cat memes and bad financial advice. We process it and flush it immediately." 
-                        },
-                        { 
-                          q: "Is this tool really free?", 
-                          a: "It costs literally $0 but your ego might never recover." 
-                        },
-                        { 
-                          q: "Can I roast private accounts?", 
-                          a: "Nope. We can't roast ghosts. If your account is private, you're safe from us. We need public posts to fuel the roast engine, so open the gates if you want the smoke." 
-                        },
-                        { 
-                          q: "Why is it so mean?", 
-                          a: "It's called tough love babe. The AI is trained to be satirical towards your Reddit habits. If it hits a little too close to home, maybe it's time to close the app and touch grass." 
-                        },
-                        { 
-                          q: "Can I share the punishment?", 
-                          a: "If you get cooked, you might as well get some clout for it. Share it on social media, group chats, or send it to your mom so she finally understands why you're single." 
-                        }
-                    ].map((item, i, arr) => (
-                        <div 
-                          key={i} 
-                          onClick={() => setOpenFaqIndex(openFaqIndex === i ? null : i)}
-                          className={`group transition-colors duration-200 cursor-pointer ${i !== arr.length - 1 ? 'border-b border-gray-100' : ''} ${openFaqIndex === i ? 'bg-gray-50/50' : 'bg-white'}`}
-                        >
-                            <div
-                              className="w-full flex items-center justify-between px-6 py-4 text-left focus:outline-none"
-                            >
-                              <span className="font-space font-medium text-gray-900 text-lg md:text-xl">{item.q}</span>
-                              <span className={`flex-shrink-0 ml-4 flex items-center justify-center w-8 h-8 rounded-full text-gray-400 transition-all duration-300 ${openFaqIndex === i ? 'rotate-45' : 'rotate-0'}`}>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M12 5V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                  <path d="M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                              </span>
-                            </div>
-                            
-                            <div 
-                              className={`grid transition-all duration-300 ease-in-out ${
-                                openFaqIndex === i ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-                              }`}
-                            >
-                              <div className="overflow-hidden">
-                                <div className="px-6 pb-5 pt-0">
-                                  <p className="text-gray-500 font-outfit leading-relaxed text-sm md:text-base text-left">
-                                    {item.a}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <FAQ />
+
 
           </div>
         </div>
@@ -752,157 +396,11 @@ function PageContent() {
         <Footer />
       </div>
 
-      <div
-        className={`fixed inset-0 bg-gradient-to-br from-white to-gray-50 flex items-center justify-center transition-transform duration-700 ease-in-out ${
-          showLoadingPage ? "translate-x-0" : "translate-x-full"
-        } overflow-hidden`}
-      >
-        <Background reduced={true} />
-        <div className="text-center max-w-3xl unselectable w-full px-4 sm:px-8">
-          <div className="mb-12">
-            <h2 className="font-space text-3xl sm:text-4xl font-bold text-gray-900 mb-3 tracking-tight uppercase">
-              System Processing
-            </h2>
-            <p className="text-gray-500 font-mono text-xs uppercase tracking-widest">Initiating behavioral analysis protocols...</p>
-          </div>
-
-          <div className="bg-white/90 backdrop-blur-xl border border-gray-300 rounded-xl p-8 shadow-2xl shadow-black/5 max-w-2xl mx-auto relative overflow-hidden">
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.02)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] z-0 pointer-events-none bg-[length:100%_4px,6px_100%]"></div>
-            
-            <div className="space-y-8 font-mono text-sm relative z-10">
-
-              <div className="text-left group">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
-                      loadingStep >= 0 && isInitialized 
-                        ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" 
-                        : "bg-gray-300"
-                    }`}></div>
-                    <span className={`font-bold tracking-tight ${loadingStep >= 0 ? "text-gray-900" : "text-gray-400"}`}>
-                       DATA_EXTRACTION
-                    </span>
-                  </div>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                    loadingStep >= 0 && isInitialized 
-                      ? "bg-green-100 text-green-700" 
-                      : "bg-gray-100 text-gray-400"
-                  }`}>
-                    {loadingStep >= 0 && isInitialized ? "[COMPLETE]" : "[WAITING]"}
-                  </span>
-                </div>
-                <div className="pl-5 text-xs text-gray-500">
-                  Extracting behavioral data from Reddit footprint...
-                </div>
-              </div>
-
-              {/* Step 2 */}
-              <div className={`text-left group transition-all duration-700 ease-out ${
-                loadingStep >= 1 
-                  ? "opacity-100 translate-y-0" 
-                  : "opacity-50 translate-y-2"
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
-                      isTrainingComplete 
-                        ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" 
-                        : "bg-orange-500 animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.6)]"
-                    }`}></div>
-                    <span className={`font-bold tracking-tight ${loadingStep >= 1 ? "text-gray-900" : "text-gray-400"}`}>
-                       PATTERN_RECOGNITION
-                    </span>
-                  </div>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                    isTrainingComplete 
-                      ? "bg-green-100 text-green-700" 
-                      : loadingStep >= 1 ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-400"
-                  }`}>
-                    {isTrainingComplete ? "[COMPLETE]" : loadingStep >= 1 ? "[PROCESSING]" : "[WAITING]"}
-                  </span>
-                </div>
-                
-                <div className="pl-5 mb-2 text-xs text-gray-500">
-                  Analyzing {trainingCount.toLocaleString()} behavioral vectors...
-                </div>
-
-                {loadingStep === 1 && (
-                  <div className="pl-5 mt-2">
-                    <div className="flex space-x-0.5 h-4 items-end">
-                      {[...Array(40)].map((_, i) => (
-                        <div
-                          key={i}
-                          className={`w-1.5 rounded-sm transition-all duration-100 ${
-                            i < (trainingCount / 79032) * 40
-                              ? "bg-orange-500"
-                              : "bg-gray-100"
-                          }`}
-                          style={{
-                            height: '60%',
-                            opacity: i < (trainingCount / 79032) * 40 ? 1 : 0.3
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Step 3 */}
-              <div className={`text-left group transition-all duration-700 ease-out ${
-                loadingStep >= 2 
-                  ? "opacity-100" 
-                  : "opacity-0"
-              }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
-                      finalizationProgress >= 100 
-                        ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" 
-                        : "bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.6)]"
-                    }`}></div>
-                    <span className={`font-bold tracking-tight ${loadingStep >= 2 ? "text-gray-900" : "text-gray-400"}`}>
-                       ROAST_GENERATION
-                    </span>
-                  </div>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded ${
-                    finalizationProgress >= 100 
-                      ? "bg-green-100 text-green-700" 
-                      : loadingStep >= 2 ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-400"
-                  }`}>
-                    {finalizationProgress >= 100 ? "[READY]" : loadingStep >= 2 ? `${finalizationProgress}%` : "[WAITING]"}
-                  </span>
-                </div>
-
-                <div className="pl-5 mt-3">
-                  <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                     <div 
-                        className="h-full bg-blue-600 transition-all duration-200 ease-out relative"
-                        style={{ width: `${finalizationProgress}%` }}
-                      >
-                        <div className="absolute inset-0 bg-white/30 w-full h-full animate-[shimmer_1s_infinite]"></div>
-                      </div>
-                  </div>
-                </div>
-              </div>
-
-              {!isInitialized && (
-                <div className="mt-8 flex justify-center">
-                  <div className="relative">
-                    <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-200 border-t-black"></div>
-                    <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-black animate-ping opacity-20"></div>
-                  </div>
-                </div>
-              )}
-
-            </div>
-          </div>
-
-          <div className="mt-8 text-xs text-gray-400 font-mono tracking-wide uppercase">
-            System resources allocated...
-          </div>
-        </div>
-      </div>
+      <LoadingOverlay 
+        show={showLoadingPage} 
+        hasApiError={hasApiError} 
+        shouldRedirect={shouldRedirect}
+      />
     </div>
   );
 }

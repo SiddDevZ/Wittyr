@@ -14,7 +14,7 @@ app.use('*', cors({
     'https://roast.siddz.com',
     'https://wittyr.com',
     'https://www.wittyr.com',
-    // 'http://localhost:3000', // Uncomment for local testing
+    'http://localhost:3000', // Uncomment for local testing
   ],
   credentials: true,
 }));

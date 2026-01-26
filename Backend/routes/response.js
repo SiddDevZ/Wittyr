@@ -15,27 +15,33 @@ const limiter = rateLimiter({
 
 async function getGeminiResponse(prompt, retryCount = 0, useProModel = false) {
   if (process.env.GEMINI) {
-    try {
-      const modelName = useProModel ? "gemini-3-flash-preview" : "gemini-3-flash-preview";
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI}`;
-      
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
-      });
+    const geminiKeys = process.env.GEMINI.split(',').map(key => key.trim()).filter(Boolean);
+    const shuffledGeminiKeys = [...geminiKeys].sort(() => Math.random() - 0.5);
 
-      if (response.ok) {
-        const result = await response.json();
-        return result.candidates[0].content.parts[0].text;
-      } else {
-        console.warn("GEMINI env key failed, falling back:", response.status);
+    for (const apiKey of shuffledGeminiKeys) {
+      try {
+        const modelName = "gemini-3-flash-preview";
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+        
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          return result.candidates[0].content.parts[0].text;
+        } else {
+          console.warn(`GEMINI env key failed (${response.status}), trying next if available...`);
+        }
+      } catch (error) {
+        console.warn(`GEMINI env key error (${error.message}), trying next if available...`);
       }
-    } catch (error) {
-      console.warn("GEMINI env key error, falling back:", error.message);
     }
+    console.warn("All GEMINI env keys failed, falling back to next provider.");
   }
 
   if (process.env.OPENROUTER_API_KEY) {
@@ -49,7 +55,7 @@ async function getGeminiResponse(prompt, retryCount = 0, useProModel = false) {
           "X-Title": "Wittyr",
         },
         body: JSON.stringify({
-          "model": "google/gemini-3-flash-preview",
+          "model": "x-ai/grok-4.1-fast",
           "messages": [
             {
               "role": "user",
@@ -96,7 +102,7 @@ async function getGeminiResponse(prompt, retryCount = 0, useProModel = false) {
     "Content-Type": "application/json"
   }
   
-  const modelName = useProModel ? "gemini-2.5-pro" : "gemini-2.5-flash"
+  const modelName = useProModel ? "gemini-2.5-flash" : "gemini-2.5-flash"
   
   for (let i = 0; i < shuffledKeys.length; i++) {
     const apiKey = shuffledKeys[i]

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import config from '../../config.json';
 import Footer from '@/components/Footer';
 import { Toaster, toast } from "sonner";
+import { Check, Share2 } from 'lucide-react';
 
 const parseQuestions = (rawQuestions) => {
   try {
@@ -35,7 +36,7 @@ export default function RoastPage() {
   const [isTyping, setIsTyping] = useState(false);
   const [userData, setUserData] = useState(null);
   const [showRoastResults, setShowRoastResults] = useState(false);
-  const [isRegenerating, setIsRegenerating] = useState(false);
+  const [isShared, setIsShared] = useState(false);
 
   const [aiSummaries, setAiSummaries] = useState({
     detailedRoast: null,
@@ -316,34 +317,15 @@ export default function RoastPage() {
     }
   };
 
-  const handleRegenerate = async () => {
-    if (isRegenerating) return;
-    
-    setIsRegenerating(true);
-    
+  const handleShare = async () => {
     try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const username = urlParams.get('user');
-      
-      if (!username) {
-        throw new Error('No username found');
-      }
-
-      const response = await fetch(`${config.url}/api/roast/${encodeURIComponent(username)}`, {
-        method: 'DELETE',
-      });
-
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.message || 'Failed to delete roast');
-      }
-
-      window.location.href = `/?regenerate=${encodeURIComponent(username)}`;
-      
-    } catch (error) {
-      console.error('Error regenerating roast:', error);
-      setIsRegenerating(false);
+      await navigator.clipboard.writeText(window.location.href);
+      setIsShared(true);
+      toast.success("Link copied to clipboard!");
+      setTimeout(() => setIsShared(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      toast.error("Failed to copy link");
     }
   };
 
@@ -486,27 +468,19 @@ export default function RoastPage() {
               </div>
 
               <div 
-                onClick={handleRegenerate}
-                className={`flex items-center space-x-2 transition-colors cursor-pointer group ${
-                  isRegenerating 
-                    ? 'text-black/40 cursor-not-allowed' 
-                    : 'text-black/70 hover:text-black'
-                }`}
+                onClick={handleShare}
+                className="flex items-center space-x-2 text-black/70 hover:text-black transition-colors cursor-pointer group"
               >
-                <svg 
-                  className={`w-4 h-4 transition-transform duration-400 ${
-                    isRegenerating 
-                      ? 'animate-spin' 
-                      : 'group-hover:rotate-180'
-                  }`}
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
+                <div className="relative w-4 h-4">
+                  <Share2 
+                    className={`w-4 h-4 absolute top-0 left-0 transition-all duration-300 ${isShared ? 'opacity-0 rotate-90 scale-50' : 'opacity-100 rotate-0 scale-100'}`} 
+                  />
+                  <Check 
+                    className={`w-4 h-4 absolute top-0 left-0 transition-all duration-300 ${isShared ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-50'}`} 
+                  />
+                </div>
                 <span className="font-pop text-sm font-medium">
-                  {isRegenerating ? 'Regenerating...' : 'Regenerate'}
+                  {isShared ? 'Copied!' : 'Share Roast'}
                 </span>
               </div>
             </div>
