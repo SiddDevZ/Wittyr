@@ -164,11 +164,7 @@ function PageContent() {
       
       {!showLoadingPage && (
         <div className="fixed top-4 left-4 right-4 z-50">
-          <div className="sm:hidden flex justify-between items-start space-x-4">
-            {/* <ThemeToggle /> */}
-            
-          </div>
-          <div className="hidden sm:flex justify-between items-start">
+          <div className="flex justify-between items-start">
             <div className="flex items-center space-x-3">
               {/* <ThemeToggle /> */}
             </div>
