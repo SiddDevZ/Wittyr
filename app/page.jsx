@@ -168,7 +168,7 @@ function PageContent() {
             <div className="flex items-center space-x-3">
               {/* <ThemeToggle /> */}
             </div>
-            <a 
+            {/* <a 
               href="https://bags.fm/jhGYMNKRjZQ9jvH3sqMXuJLkh7YqhTm46VY61KVBAGS" 
               target="_blank" 
               rel="noopener noreferrer"
@@ -180,7 +180,7 @@ function PageContent() {
             >
               <img src="https://bags.fm/assets/images/bags-icon.png" className="w-4 h-4" alt="" />
               $WITTY
-            </a>
+            </a> */}
           </div>
         </div>
       )}
